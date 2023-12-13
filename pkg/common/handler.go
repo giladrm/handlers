@@ -87,12 +87,29 @@ func init() {
 	hMap = &handlerMap{}
 	initMap = &handlerInitMap{}
 }
+
 func InitAll() {
 	GetInitMap().Range(func(key, value any) bool {
 		k := key.(HandlerKey)
 		v := value.(InitHandler)
 		// fmt.Printf("key: %s, value: %+#v\n", k, v)
 		SetHandler(k, v.Init())
+		return true
+	})
+}
+
+func InitSome(keys []HandlerKey) {
+	kmap := map[HandlerKey]bool{}
+	for _, e := range keys {
+		kmap[e] = true
+	}
+	GetInitMap().Range(func(key, value any) bool {
+		k := key.(HandlerKey)
+		if _, ok := kmap[k]; ok {
+			v := value.(InitHandler)
+			// fmt.Printf("key: %s, value: %+#v\n", k, v)
+			SetHandler(k, v.Init())
+		}
 		return true
 	})
 }
