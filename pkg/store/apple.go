@@ -1,6 +1,10 @@
 package store
 
-import "handlers/pkg/common"
+import (
+	"handlers/pkg/common"
+	"handlers/pkg/distribution"
+	"handlers/pkg/farm"
+)
 
 type (
 	AppleStore interface {
@@ -11,7 +15,9 @@ type (
 
 	AppleStoreO struct {
 		common.RunHandler
-		desc string
+		desc       string
+		truckDist  distribution.TruckDistribution
+		orchadFarm farm.OrhcadFarm
 	}
 
 	appleKey       struct{ common.HandlerKey }
@@ -26,11 +32,13 @@ var (
 
 func NewAppleStore(args ...interface{}) AppleStore {
 	return &AppleStoreO{
-		desc: "Apple Store instance",
+		desc:       "Apple Store instance",
+		truckDist:  distribution.MustGetTruckDistributionFromCommon(),
+		orchadFarm: farm.MustGetOrchadFarmFromCommon(),
 	}
 }
 
-func (p AppleStoreO) String() string       { return p.desc }
+func (p *AppleStoreO) String() string      { return p.desc }
 func (p *AppleStoreO) Get() interface{}    { return p }
 func (p *AppleStoreO) GetSmith() string    { return "smith apple" }
 func (p *AppleStoreO) GetPinkLady() string { return "pink lady apple" }

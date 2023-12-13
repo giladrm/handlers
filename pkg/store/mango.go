@@ -30,7 +30,7 @@ func NewMangoStore(args ...interface{}) MangoStore {
 	}
 }
 
-func (p MangoStoreO) String() string    { return p.desc }
+func (p *MangoStoreO) String() string   { return p.desc }
 func (p *MangoStoreO) Get() interface{} { return p }
 func (p *MangoStoreO) GetMaya() string  { return "maya mango" }
 func (p *MangoStoreO) GetIrwin() string { return "irwin mango" }

@@ -30,7 +30,7 @@ func NewGreenHouseFarm(args ...interface{}) GreenHouseFarm {
 	}
 }
 
-func (p GreenHouseFarmO) String() string                   { return p.desc }
+func (p *GreenHouseFarmO) String() string                  { return p.desc }
 func (p *GreenHouseFarmO) Get() interface{}                { return p }
 func (p *GreenHouseFarmO) PickTomato(which string) string  { return which + " tomato picked" }
 func (p *GreenHouseFarmO) PickLettuce(which string) string { return which + " lettuce picked" }

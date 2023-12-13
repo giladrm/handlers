@@ -30,7 +30,7 @@ func NewOrchadFarm(args ...interface{}) OrhcadFarm {
 	}
 }
 
-func (p OrchadFarmO) String() string                 { return p.desc }
+func (p *OrchadFarmO) String() string                { return p.desc }
 func (p *OrchadFarmO) Get() interface{}              { return p }
 func (p *OrchadFarmO) PickApple(which string) string { return which + " apple picked" }
 func (p *OrchadFarmO) PickMango(which string) string { return which + " mango picked" }
