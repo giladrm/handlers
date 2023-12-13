@@ -1,6 +1,1 @@
 package app2
-
-import (
-	_ "handlers/pkg/pkg1"
-	_ "handlers/pkg/pkg2"
-)

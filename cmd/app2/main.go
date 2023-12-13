@@ -2,21 +2,26 @@ package main
 
 import (
 	"fmt"
-	_ "handlers/apps/app2"
 	"handlers/pkg/common"
-	"handlers/pkg/pkg1"
-	"handlers/pkg/pkg2"
+	"handlers/pkg/distribution"
+	"handlers/pkg/farm"
 )
 
 func main() {
-	common.InitAll()
+	requiredHandlerKeys := []common.HandlerKey{
+		farm.OrchadFarmKey,
+		distribution.TruckDistributionKey,
+	}
+	common.InitSome(requiredHandlerKeys)
 
 	for k, v := range common.GetAllHandlers() {
 		fmt.Printf("handler <%+#v>: <%+#v>\n", k, v.String())
 	}
-	p1 := pkg1.MustGetPkg1FromCommon()
-	p2 := pkg2.MustGetPkg2FromCommon()
-	fmt.Println(p1.Foo())
-	fmt.Println(p2.Bar())
+
+	orchad := farm.MustGetOrchadFarmFromCommon()
+	truck := distribution.MustGetTruckDistributionFromCommon()
+
+	fmt.Println(orchad.PickApple("maya"))
+	fmt.Println(truck.Load("apple"))
 
 }
