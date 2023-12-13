@@ -14,8 +14,9 @@ func main() {
 	for k, v := range common.GetAllHandlers() {
 		fmt.Printf("handler <%+#v>: <%+#v>\n", k, v.String())
 	}
-	p1 := common.MustGetHandler(pkg1.Pkg1K).(pkg1.Pkg1)
-	p3 := common.MustGetHandler(pkg3.Pkg3K).(pkg3.Pkg3)
+
+	p1 := pkg1.MustGetPkg1FromCommon()
+	p3 := pkg3.MustGetPkg3FromCommon()
 	fmt.Println(p1.Foo())
 	fmt.Println(p3.Baz())
 

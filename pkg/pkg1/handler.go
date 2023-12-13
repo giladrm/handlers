@@ -28,3 +28,15 @@ func (p Pkg1Concrete) String() string {
 func (p *Pkg1Concrete) Foo() string {
 	return "foo"
 }
+
+func GetPkg1FromCommon() (Pkg1, bool) {
+	p, ok := common.GetHandler(Pkg1K)
+	if !ok {
+		return nil, ok
+	}
+	return p.(Pkg1), ok
+}
+
+func MustGetPkg1FromCommon() Pkg1 {
+	return common.MustGetHandler(Pkg1K).(Pkg1)
+}

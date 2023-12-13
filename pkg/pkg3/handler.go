@@ -28,3 +28,7 @@ func (p Pkg3Concrete) String() string {
 func (p *Pkg3Concrete) Baz() string {
 	return "baza"
 }
+
+func MustGetPkg3FromCommon() Pkg3 {
+	return common.MustGetHandler(Pkg3K).(Pkg3)
+}

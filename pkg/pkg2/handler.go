@@ -32,3 +32,7 @@ func (p Pkg2Concrete) String() string {
 func (p *Pkg2Concrete) Bar() string {
 	return "bar" + ":" + p.pkg1.Foo()
 }
+
+func MustGetPkg2FromCommon() Pkg2 {
+	return common.MustGetHandler(Pkg2K).(Pkg2)
+}
