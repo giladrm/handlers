@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"handlers/pkg/common"
+	"handlers/pkg/distribution"
 	"handlers/pkg/farm"
 	"handlers/pkg/store"
 )
@@ -10,6 +11,7 @@ import (
 func main() {
 	requiredHandlerKeys := []common.HandlerKey{
 		farm.OrchadFarmKey,
+		distribution.TruckDistributionKey,
 		store.AppleStoreKey,
 		store.MangoStoreKey,
 	}
