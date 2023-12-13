@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	common.InitAll()
+
 	for k, v := range common.GetAllHandlers() {
 		fmt.Printf("handler <%+#v>: <%+#v>\n", k, v.String())
 	}
