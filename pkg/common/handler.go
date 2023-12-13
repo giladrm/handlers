@@ -22,7 +22,10 @@ type (
 		m sync.Map
 	}
 	handlerInitMap struct {
-		m sync.Map
+		m []struct {
+			k HandlerKey
+			v InitHandler
+		}
 	}
 )
 
@@ -58,10 +61,15 @@ func GetAllHandlers() (res map[string]RunHandler) {
 var initMap *handlerInitMap
 
 func AddInitHandler(key HandlerKey, initFunc InitHandler) (err error) {
-	if _, ok := initMap.m.Load(key); ok {
-		return errors.Errorf("key %v, already exists", key)
+	for _, e := range initMap.m {
+		if e.k == key {
+			return errors.Errorf("key %v, already exists", key)
+		}
 	}
-	initMap.m.Store(key, initFunc)
+	initMap.m = append(initMap.m, struct {
+		k HandlerKey
+		v InitHandler
+	}{key, initFunc})
 	return
 }
 
@@ -70,7 +78,9 @@ func GetInitMap() *handlerInitMap {
 }
 
 func (h *handlerInitMap) Range(f func(key any, value any) bool) {
-	h.m.Range(func(key, value any) bool { return f(key, value) })
+	for _, e := range h.m {
+		f(e.k, e.v)
+	}
 }
 
 func init() {
