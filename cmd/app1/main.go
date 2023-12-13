@@ -15,10 +15,12 @@ func main() {
 	for k, v := range common.GetAllHandlers() {
 		fmt.Printf("handler <%+#v>: <%+#v>\n", k, v.String())
 	}
-	p1 := pkg1.MustGetPkg1FromCommon()
+	p1h1 := pkg1.MustGetPkg1Handler1FromCommon()
+	p1h2 := pkg1.MustGetPkg1Handler2FromCommon()
 	p2 := pkg2.MustGetPkg2FromCommon()
 	p3 := pkg3.MustGetPkg3FromCommon()
-	fmt.Println(p1.Foo())
+	fmt.Println(p1h1.Foo1())
+	fmt.Println(p1h2.FooBar())
 	fmt.Println(p2.Bar())
 	fmt.Println(p3.Baz())
 

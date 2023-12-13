@@ -14,12 +14,12 @@ type (
 	Pkg2Concrete struct {
 		common.RunHandler
 		desc string
-		pkg1 pkg1.Pkg1
+		pkg1 pkg1.Pkg1Handler1
 	}
 )
 
 func NewPkg2(args ...interface{}) Pkg2 {
-	pkg1 := common.MustGetHandler(pkg1.Pkg1K).(pkg1.Pkg1)
+	pkg1 := common.MustGetHandler(pkg1.Pkg1h1K).(pkg1.Pkg1Handler1)
 	return &Pkg2Concrete{pkg1: pkg1,
 		desc: "pkg2 isntance (with 1 inside)"}
 }
@@ -30,7 +30,7 @@ func (p Pkg2Concrete) String() string {
 	return p.desc + ":" + p.pkg1.String()
 }
 func (p *Pkg2Concrete) Bar() string {
-	return "bar" + ":" + p.pkg1.Foo()
+	return "bar" + ":" + p.pkg1.Foo1()
 }
 
 func MustGetPkg2FromCommon() Pkg2 {
