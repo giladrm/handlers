@@ -110,17 +110,17 @@ func InitHandlers() {
 	initMap = &handlerInitMap{}
 }
 
-func InitAll() {
+func InitAll(args ...interface{}) {
 	GetInitMap().Range(func(key, value any) bool {
 		k := key.(HandlerKey)
 		v := value.(InitHandler)
 		// fmt.Printf("key: %s, value: %+#v\n", k, v)
-		SetHandler(k, v.Init())
+		SetHandler(k, v.Init(args))
 		return true
 	})
 }
 
-func InitSome(keys []HandlerKey) {
+func InitSome(keys []HandlerKey, args ...interface{}) {
 	kmap := map[HandlerKey]bool{}
 	for _, e := range keys {
 		kmap[e] = true
@@ -130,7 +130,7 @@ func InitSome(keys []HandlerKey) {
 		if _, ok := kmap[k]; ok {
 			v := value.(InitHandler)
 			// fmt.Printf("key: %s, value: %+#v\n", k, v)
-			SetHandler(k, v.Init())
+			SetHandler(k, v.Init(args))
 		}
 		return true
 	})

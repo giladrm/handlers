@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"handlers/apps/app1"
 	"handlers/pkg/common"
 	"handlers/pkg/distribution"
 	"handlers/pkg/farm"
@@ -20,11 +21,5 @@ func main() {
 	for k, v := range common.GetAllHandlers() {
 		fmt.Printf("handler <%+#v>: <%+#v>\n", k, v.String())
 	}
-	appleStore := store.MustGetAppleStoreFromCommon()
-	smith := appleStore.GetSmith()
-	mangoStore := store.MustGetMangoStoreFromCommon()
-	maya := mangoStore.GetMaya()
-	fmt.Println(smith)
-	fmt.Println(maya)
-
+	app1.App1()
 }

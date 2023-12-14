@@ -8,6 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func ResetHandlers() {
+	common.ResetHandlers()
+}
+
 func Test_handlers(t *testing.T) {
 	common.InitAll()
 	defer common.ResetHandlers()
