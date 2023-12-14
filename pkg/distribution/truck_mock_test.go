@@ -1,7 +1,8 @@
-package distribution
+package distribution_test
 
 import (
 	"handlers/pkg/common"
+	"handlers/pkg/distribution"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -22,25 +23,25 @@ var (
 	TruckDistributionMockKey = truckDistributionMockKey{}
 )
 
-func NewTruckDistributionMock(args ...interface{}) TruckDistribution {
+func NewTruckDistributionMock(args ...interface{}) distribution.TruckDistribution {
 	return &TruckDistributionMock{}
 }
 
-func (m *TruckDistributionMock) String() string             { return m.Called().Get(0).(string) }
+func (m *TruckDistributionMock) String() string             { return m.Called().String(0) }
 func (m *TruckDistributionMock) Get() interface{}           { return m.Called().Get(0) }
 func (m *TruckDistributionMock) Load(which string) string   { return m.Called(which).Get(0).(string) }
 func (m *TruckDistributionMock) Unload(which string) string { return m.Called(which).Get(0).(string) }
 
-func GetTruckDistributionMockFromCommon() (TruckDistribution, bool) {
+func GetTruckDistributionMockFromCommon() (distribution.TruckDistribution, bool) {
 	p, ok := common.GetHandler(TruckDistributionMockKey)
 	if !ok {
 		return nil, ok
 	}
-	return p.(TruckDistribution), ok
+	return p.(distribution.TruckDistribution), ok
 }
 
-func MustGetTruckDistributionMockFromCommon() TruckDistribution {
-	return common.MustGetHandler(TruckDistributionMockKey).(TruckDistribution)
+func MustGetTruckDistributionMockFromCommon() distribution.TruckDistribution {
+	return common.MustGetHandler(TruckDistributionMockKey).(distribution.TruckDistribution)
 }
 
 func (a truckDistributionMockInit) Init(args ...interface{}) common.RunHandler {
