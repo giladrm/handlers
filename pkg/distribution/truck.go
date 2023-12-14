@@ -30,7 +30,7 @@ func NewTruckDistribution(args ...interface{}) TruckDistribution {
 	}
 }
 
-func (p TruckDistributionO) String() string              { return p.desc }
+func (p *TruckDistributionO) String() string             { return p.desc }
 func (p *TruckDistributionO) Get() interface{}           { return p }
 func (p *TruckDistributionO) Load(which string) string   { return "loading " + which }
 func (p *TruckDistributionO) Unload(which string) string { return "unloading " + which }

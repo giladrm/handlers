@@ -29,20 +29,39 @@ type (
 	}
 )
 
+var (
+	hMap             *handlerMap
+	initMap          *handlerInitMap
+	ErrorKeyNotFound = errors.New("key not found")
+	ErrorKeyExist    = errors.New("key already exist")
+)
+
 // handlerMap
-var hMap *handlerMap
 
 func SetHandler(key HandlerKey, h RunHandler) {
 	hMap.m.Store(key, h)
 }
+
+func (h *handlerMap) Range(f func(key, value any) bool) {
+	h.m.Range(f)
+}
+
+func GetHandlersMap() *handlerMap {
+	return hMap
+}
+
 func GetHandler(key HandlerKey) (RunHandler, bool) {
 	h, ok := hMap.m.Load(key)
-	return h.(RunHandler), ok
+	if ok {
+		return h.(RunHandler), ok
+	}
+	return nil, ok
 }
+
 func MustGetHandler(key HandlerKey) RunHandler {
 	h, ok := hMap.m.Load(key)
 	if !ok {
-		panic("key not found")
+		panic(errors.Wrap(ErrorKeyNotFound, key.String()))
 	}
 	return h.(RunHandler)
 }
@@ -58,12 +77,11 @@ func GetAllHandlers() (res map[string]RunHandler) {
 }
 
 // initMap
-var initMap *handlerInitMap
 
 func AddInitHandler(key HandlerKey, initFunc InitHandler) (err error) {
 	for _, e := range initMap.m {
 		if e.k == key {
-			return errors.Errorf("key %v, already exists", key)
+			return errors.Wrap(err, key.String())
 		}
 	}
 	initMap.m = append(initMap.m, struct {
@@ -84,6 +102,10 @@ func (h *handlerInitMap) Range(f func(key any, value any) bool) {
 }
 
 func init() {
+	InitHandlers()
+}
+
+func InitHandlers() {
 	hMap = &handlerMap{}
 	initMap = &handlerInitMap{}
 }
