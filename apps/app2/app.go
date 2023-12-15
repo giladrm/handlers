@@ -15,6 +15,6 @@ func App2() {
 	orchad := farm.MustGetOrchadFarmFromCommon()
 	truck := distribution.MustGetTruckDistributionFromCommon()
 
-	fmt.Println(orchad.PickApple("maya"))
+	fmt.Println(orchad.PickMango("maya"))
 	fmt.Println(truck.Load("apple"))
 }
