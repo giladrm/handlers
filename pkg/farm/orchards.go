@@ -13,15 +13,6 @@ type (
 		common.RunHandler
 		desc string
 	}
-
-	orchadFarmKey  struct{ common.HandlerKey }
-	orchadFarmInit struct{}
-)
-
-func (k orchadFarmKey) String() string { return "orchad farm key" }
-
-var (
-	OrchadFarmKey = orchadFarmKey{}
 )
 
 func NewOrchadFarm(args ...interface{}) OrhcadFarm {
@@ -35,6 +26,16 @@ func (p *OrchadFarmO) Get() interface{}              { return p }
 func (p *OrchadFarmO) PickApple(which string) string { return which + " apple picked" }
 func (p *OrchadFarmO) PickMango(which string) string { return which + " mango picked" }
 
+// register as a handler and implement retrieval func
+
+func orchadFarmKeyString() string                          { return "orchad farm key" }
+func initOrchadFarm(args ...interface{}) common.RunHandler { return NewOrchadFarm(args) }
+
+var (
+	OrchadFarmKey  = farmKey{keyString: orchadFarmKeyString()}
+	orchadFarmInit = farmInit{initFunc: initOrchadFarm}
+)
+
 func GetOrchadFarmFromCommon() (OrhcadFarm, bool) {
 	p, ok := common.GetHandler(OrchadFarmKey)
 	if !ok {
@@ -47,8 +48,4 @@ func MustGetOrchadFarmFromCommon() OrhcadFarm {
 	return common.MustGetHandler(OrchadFarmKey).(OrhcadFarm)
 }
 
-func (a orchadFarmInit) Init(args ...interface{}) common.RunHandler { return NewOrchadFarm(args) }
-
-func init() {
-	common.AddInitHandler(OrchadFarmKey, orchadFarmInit{})
-}
+func init() { common.AddInitHandler(OrchadFarmKey, orchadFarmInit) }

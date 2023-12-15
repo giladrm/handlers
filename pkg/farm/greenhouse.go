@@ -13,15 +13,6 @@ type (
 		common.RunHandler
 		desc string
 	}
-
-	greenHouseFarmKey  struct{ common.HandlerKey }
-	greenHouseFarmInit struct{}
-)
-
-func (k greenHouseFarmKey) String() string { return "greenhouse farm key" }
-
-var (
-	GreenHouseFarmKey = greenHouseFarmKey{}
 )
 
 func NewGreenHouseFarm(args ...interface{}) GreenHouseFarm {
@@ -35,6 +26,16 @@ func (p *GreenHouseFarmO) Get() interface{}                { return p }
 func (p *GreenHouseFarmO) PickTomato(which string) string  { return which + " tomato picked" }
 func (p *GreenHouseFarmO) PickLettuce(which string) string { return which + " lettuce picked" }
 
+// register as a handler and implement retrieval func
+
+func greenHouseFarmKeyString() string                           { return "greenhouse farm key" }
+func initGreenHousedFarm(args ...interface{}) common.RunHandler { return NewOrchadFarm(args) }
+
+var (
+	GreenHouseFarmKey  = farmKey{keyString: greenHouseFarmKeyString()}
+	greenHouseFarmInit = farmInit{initFunc: initGreenHousedFarm}
+)
+
 func GetGreenHouseFarmFromCommon() (GreenHouseFarm, bool) {
 	p, ok := common.GetHandler(GreenHouseFarmKey)
 	if !ok {
@@ -43,14 +44,10 @@ func GetGreenHouseFarmFromCommon() (GreenHouseFarm, bool) {
 	return p.(GreenHouseFarm), ok
 }
 
-func MustGetGreenHuseFarmFromCommon() GreenHouseFarm {
+func MustGetGreenHouseFarmFromCommon() GreenHouseFarm {
 	return common.MustGetHandler(GreenHouseFarmKey).(GreenHouseFarm)
 }
 
-func (a greenHouseFarmInit) Init(args ...interface{}) common.RunHandler {
-	return NewGreenHouseFarm(args)
-}
-
 func init() {
-	common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit{})
+	common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit)
 }
