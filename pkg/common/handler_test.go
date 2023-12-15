@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func ResetHandlers() {
+func TearDown() {
 	common.ResetHandlers()
 }
 
 func Test_handlers(t *testing.T) {
 	common.InitAll()
-	defer common.ResetHandlers()
+	defer TearDown()
 
 	res := common.GetAllHandlers()
 	assert.Len(t, res, common.CountInitHandlers())
@@ -35,7 +35,7 @@ func (i testInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func Test_handlers_adding_handler(t *testing.T) {
-	defer common.ResetHandlers()
+	defer TearDown()
 	testKey := testKeyType{}
 
 	assert.NotPanicsf(t, func() {
@@ -49,7 +49,7 @@ func Test_handlers_adding_handler(t *testing.T) {
 
 func Test_handlers_one(t *testing.T) {
 	common.InitSome([]common.HandlerKey{FooKey})
-	defer common.ResetHandlers()
+	defer TearDown()
 
 	res := common.GetAllHandlers()
 	assert.Len(t, res, 1)
@@ -71,7 +71,7 @@ func Test_handlers_MustGet(t *testing.T) {
 		FooBarKey,
 	}
 	common.InitSome(handlerKeyList)
-	defer common.ResetHandlers()
+	defer TearDown()
 
 	res := common.GetAllHandlers()
 	assert.Len(t, res, len(handlerKeyList))

@@ -26,7 +26,7 @@ var (
 
 func NewGreenHouseFarm(args ...interface{}) GreenHouseFarm {
 	return &GreenHouseFarmO{
-		desc: "orchad farm instance",
+		desc: "greenhouse farm instance",
 	}
 }
 

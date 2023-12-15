@@ -7,17 +7,51 @@ import (
 )
 
 type (
+	// HandlerKey used to define actual handler key using embedding type of HandlerKey
+	//
+	// e.g.
+	//	type myHandlerKey struct {
+	//		commmon.HandlerKey
+	//	}
+	//
+	// and instantiate a concrete key - must be exported in order
+	// that other imports can use the handler after associating it with the key
+	//
+	//	var MyHandlerKey = MyHandlerKey{}
 	HandlerKey interface {
 		String() string
 	}
+
+	// RunHandler used to define actual handler using embedding type of RunHandler
+	//
+	// e.g.
+	//	type MyHandlerInterface interface {
+	//		commmon.RunHandler
+	//	    ...
+	//	}
+	//
+	// and then implement the interface (or skip the interface...)
+	//
+	//	type MyHandler struct {
+	//		commmon.RunHandler
+	//	    ...
+	//	}
 	RunHandler interface {
 		Get() interface{}
 		String() string
 	}
 
+	// InitHandler need to be implemented for the handler in order to have the handler initialized in a common manner
+	//
+	// e.g.
+	//  type myInitHandler sturct{}
+	//  func (i myInitHandler) Init(args ...interface{}) RunHandler {
+	//      return &MyHander{}
+	//   }
 	InitHandler interface {
 		Init(args ...interface{}) RunHandler
 	}
+
 	handlerMap struct {
 		m sync.Map
 	}
@@ -32,8 +66,8 @@ type (
 var (
 	hMap             *handlerMap
 	initMap          *handlerInitMap
-	ErrorKeyNotFound = errors.New("key not found")
-	ErrorKeyExist    = errors.New("key already exist")
+	ErrorKeyNotFound = errors.New("handler key not found")
+	ErrorKeyExist    = errors.New("handler key already exist")
 )
 
 // handlerMap
@@ -68,7 +102,7 @@ func MustGetHandler(key HandlerKey) RunHandler {
 
 func GetAllHandlers() (res map[string]RunHandler) {
 	res = map[string]RunHandler{}
-	hMap.m.Range(func(key, value any) bool {
+	hMap.Range(func(key, value any) bool {
 		k := key.(HandlerKey)
 		res[k.String()] = value.(RunHandler)
 		return true
@@ -78,6 +112,15 @@ func GetAllHandlers() (res map[string]RunHandler) {
 
 // initMap
 
+// AddInitHandler register and associate a inithandler func with a handler key.
+// for registration each handler within its file/package scope need to invokde this function
+// in order to have seemless initialization
+//
+// e.g
+//
+//	func init() {
+//	    common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit{})
+//	}
 func AddInitHandler(key HandlerKey, initFunc InitHandler) (err error) {
 	for _, e := range initMap.m {
 		if e.k == key {
@@ -102,24 +145,21 @@ func (h *handlerInitMap) Range(f func(key any, value any) bool) {
 }
 
 func init() {
-	InitHandlers()
-}
-
-func InitHandlers() {
 	hMap = &handlerMap{}
 	initMap = &handlerInitMap{}
 }
 
+// InitAll initialize all registered handlers
 func InitAll(args ...interface{}) {
 	GetInitMap().Range(func(key, value any) bool {
 		k := key.(HandlerKey)
 		v := value.(InitHandler)
-		// fmt.Printf("key: %s, value: %+#v\n", k, v)
 		SetHandler(k, v.Init(args))
 		return true
 	})
 }
 
+// InitSome initialize only request hanlders according to provided handlerKey list from the registered hadnlers
 func InitSome(keys []HandlerKey, args ...interface{}) {
 	kmap := map[HandlerKey]bool{}
 	for _, e := range keys {
@@ -129,7 +169,6 @@ func InitSome(keys []HandlerKey, args ...interface{}) {
 		k := key.(HandlerKey)
 		if _, ok := kmap[k]; ok {
 			v := value.(InitHandler)
-			// fmt.Printf("key: %s, value: %+#v\n", k, v)
 			SetHandler(k, v.Init(args))
 		}
 		return true

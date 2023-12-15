@@ -11,5 +11,6 @@ func main() {
 		distribution.TruckDistributionKey,
 	}
 	common.InitSome(requiredHandlerKeys)
+
 	app3.App3()
 }
