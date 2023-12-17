@@ -70,10 +70,7 @@ func TestTruck_unhappy_flow(t *testing.T) {
 	defer common.ResetHandlers()
 	common.InitSome([]common.HandlerKey{TruckDistributionMockKey})
 	var keys []common.HandlerKey
-	common.GetHandlersMap().Range(func(key, value any) bool {
-		keys = append(keys, key.(common.HandlerKey))
-		return true
-	})
+	common.GetHandlersMap().Range(func(key common.HandlerKey, value common.RunHandler) bool { keys = append(keys, key); return true })
 	assert.NotEmpty(t, keys)
 	assert.NotContains(t, keys, distribution.TruckDistributionKey)
 

@@ -76,8 +76,13 @@ func SetHandler(key HandlerKey, h RunHandler) {
 	hMap.m.Store(key, h)
 }
 
-func (h *handlerMap) Range(f func(key, value any) bool) {
-	h.m.Range(f)
+func (h *handlerMap) Range(f func(key HandlerKey, value RunHandler) bool) {
+	h.m.Range(func(key, value any) bool {
+		k := key.(HandlerKey)
+		v := value.(RunHandler)
+		f(k, v)
+		return true
+	})
 }
 
 func GetHandlersMap() *handlerMap {
@@ -100,13 +105,9 @@ func MustGetHandler(key HandlerKey) RunHandler {
 	return h.(RunHandler)
 }
 
-func GetAllHandlers() (res map[string]RunHandler) {
-	res = map[string]RunHandler{}
-	hMap.Range(func(key, value any) bool {
-		k := key.(HandlerKey)
-		res[k.String()] = value.(RunHandler)
-		return true
-	})
+func GetAllHandlers() (res map[HandlerKey]RunHandler) {
+	res = map[HandlerKey]RunHandler{}
+	hMap.Range(func(key HandlerKey, value RunHandler) bool { res[key] = value; return true })
 	return
 }
 
