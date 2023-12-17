@@ -6,7 +6,7 @@ func ResetHandlers() {
 }
 
 func CountInitHandlers() (count int) {
-	initMap.Range(func(key, value any) bool {
+	initMap.traverse(func(_ HandlerKey, _ InitHandler) bool {
 		count += 1
 		return true
 	})

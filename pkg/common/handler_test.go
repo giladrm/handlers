@@ -18,7 +18,7 @@ func Test_handlers(t *testing.T) {
 
 	res := common.GetAllHandlers()
 	assert.Len(t, res, common.CountInitHandlers())
-	common.GetHandlersMap().Range(func(key common.HandlerKey, value common.RunHandler) bool {
+	common.RangeHandlers(func(key common.HandlerKey, value common.RunHandler) bool {
 		t.Log(value.String())
 		return true
 	})

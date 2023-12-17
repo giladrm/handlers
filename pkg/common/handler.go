@@ -72,11 +72,13 @@ var (
 
 // handlerMap
 
-func SetHandler(key HandlerKey, h RunHandler) {
-	hMap.m.Store(key, h)
-}
+func SetHandler(key HandlerKey, h RunHandler)                     { hMap.m.Store(key, h) }
+func RangeHandlers(f func(key HandlerKey, value RunHandler) bool) { hMap.traverse(f) }
+func GetHandler(key HandlerKey) (RunHandler, bool)                { return hMap.getHandler(key) }
+func MustGetHandler(key HandlerKey) RunHandler                    { return hMap.mustGetHandler(key) }
+func GetAllHandlers() map[HandlerKey]RunHandler                   { return hMap.getAllHandlers() }
 
-func (h *handlerMap) Range(f func(key HandlerKey, value RunHandler) bool) {
+func (h *handlerMap) traverse(f func(key HandlerKey, value RunHandler) bool) {
 	h.m.Range(func(key, value any) bool {
 		k := key.(HandlerKey)
 		v := value.(RunHandler)
@@ -85,33 +87,68 @@ func (h *handlerMap) Range(f func(key HandlerKey, value RunHandler) bool) {
 	})
 }
 
-func GetHandlersMap() *handlerMap {
-	return hMap
-}
-
-func GetHandler(key HandlerKey) (RunHandler, bool) {
-	h, ok := hMap.m.Load(key)
+func (h *handlerMap) getHandler(key HandlerKey) (RunHandler, bool) {
+	handler, ok := h.m.Load(key)
 	if ok {
-		return h.(RunHandler), ok
+		return handler.(RunHandler), ok
 	}
 	return nil, ok
 }
 
-func MustGetHandler(key HandlerKey) RunHandler {
-	h, ok := hMap.m.Load(key)
+func (h *handlerMap) mustGetHandler(key HandlerKey) RunHandler {
+	handler, ok := h.getHandler(key)
 	if !ok {
 		panic(errors.Wrap(ErrorKeyNotFound, key.String()))
 	}
-	return h.(RunHandler)
+	return handler
 }
 
-func GetAllHandlers() (res map[HandlerKey]RunHandler) {
+func (h *handlerMap) getAllHandlers() (res map[HandlerKey]RunHandler) {
 	res = map[HandlerKey]RunHandler{}
-	hMap.Range(func(key HandlerKey, value RunHandler) bool { res[key] = value; return true })
+	hMap.traverse(func(key HandlerKey, value RunHandler) bool { res[key] = value; return true })
 	return
 }
 
 // initMap
+
+func (h *handlerInitMap) addInitHandler(key HandlerKey, initHandler InitHandler) error {
+	for _, e := range h.m {
+		if e.k == key {
+			return errors.Wrap(ErrorKeyExist, key.String())
+		}
+	}
+	h.m = append(h.m, struct {
+		k HandlerKey
+		v InitHandler
+	}{key, initHandler})
+	return nil
+}
+
+func (h *handlerInitMap) traverse(f func(key HandlerKey, value InitHandler) bool) {
+	for _, e := range h.m {
+		f(e.k, e.v)
+	}
+}
+
+func (h *handlerInitMap) initAll(args ...interface{}) {
+	h.traverse(func(key HandlerKey, value InitHandler) bool {
+		SetHandler(key, value.Init(args))
+		return true
+	})
+}
+
+func (h *handlerInitMap) initSome(keys []HandlerKey, args ...interface{}) {
+	kmap := map[HandlerKey]bool{}
+	for _, e := range keys {
+		kmap[e] = true
+	}
+	h.traverse(func(key HandlerKey, value InitHandler) bool {
+		if _, ok := kmap[key]; ok {
+			SetHandler(key, value.Init(args))
+		}
+		return true
+	})
+}
 
 // AddInitHandler register and associate a inithandler func with a handler key.
 // for registration each handler within its file/package scope need to invokde this function
@@ -122,56 +159,17 @@ func GetAllHandlers() (res map[HandlerKey]RunHandler) {
 //	func init() {
 //	    common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit{})
 //	}
-func AddInitHandler(key HandlerKey, initFunc InitHandler) (err error) {
-	for _, e := range initMap.m {
-		if e.k == key {
-			return errors.Wrap(err, key.String())
-		}
-	}
-	initMap.m = append(initMap.m, struct {
-		k HandlerKey
-		v InitHandler
-	}{key, initFunc})
-	return
+func AddInitHandler(key HandlerKey, initHandler InitHandler) error {
+	return initMap.addInitHandler(key, initHandler)
 }
 
-func GetInitMap() *handlerInitMap {
-	return initMap
-}
+// InitAll initialize all registered handlers
+func InitAll(args ...interface{}) { initMap.initAll(args) }
 
-func (h *handlerInitMap) Range(f func(key any, value any) bool) {
-	for _, e := range h.m {
-		f(e.k, e.v)
-	}
-}
+// InitSome initialize only request hanlders according to provided handlerKey list from the registered hadnlers
+func InitSome(keys []HandlerKey, args ...interface{}) { initMap.initSome(keys, args) }
 
 func init() {
 	hMap = &handlerMap{}
 	initMap = &handlerInitMap{}
-}
-
-// InitAll initialize all registered handlers
-func InitAll(args ...interface{}) {
-	GetInitMap().Range(func(key, value any) bool {
-		k := key.(HandlerKey)
-		v := value.(InitHandler)
-		SetHandler(k, v.Init(args))
-		return true
-	})
-}
-
-// InitSome initialize only request hanlders according to provided handlerKey list from the registered hadnlers
-func InitSome(keys []HandlerKey, args ...interface{}) {
-	kmap := map[HandlerKey]bool{}
-	for _, e := range keys {
-		kmap[e] = true
-	}
-	GetInitMap().Range(func(key, value any) bool {
-		k := key.(HandlerKey)
-		if _, ok := kmap[k]; ok {
-			v := value.(InitHandler)
-			SetHandler(k, v.Init(args))
-		}
-		return true
-	})
 }

@@ -25,3 +25,6 @@ app1 app2 app3:
 	@echo --------------------------
 	@go run cmd/${APP}/main.go
 	@echo ==========================
+
+test:
+	for s in $$(go list ./...); do if ! ${ENV} go test -count=1 -failfast -v -p 1 $$s; then break; fi; done
