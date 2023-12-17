@@ -151,6 +151,7 @@ func (h *handlerInitMap) initSome(keys []HandlerKey, args ...interface{}) {
 }
 
 // AddInitHandler register and associate a inithandler func with a handler key.
+//
 // for registration each handler within its file/package scope need to invokde this function
 // in order to have seemless initialization
 //
@@ -164,9 +165,13 @@ func AddInitHandler(key HandlerKey, initHandler InitHandler) error {
 }
 
 // InitAll initialize all registered handlers
+//
+// usefull for most cases where there is no interdependency between handlers
 func InitAll(args ...interface{}) { initMap.initAll(args) }
 
-// InitSome initialize only request hanlders according to provided handlerKey list from the registered hadnlers
+// InitSome initialize only requested handlers according to provided handlerKey list from the registered hadnlers
+//
+// usefull for cases where there is an interdependency berween handlers
 func InitSome(keys []HandlerKey, args ...interface{}) { initMap.initSome(keys, args) }
 
 func init() {
