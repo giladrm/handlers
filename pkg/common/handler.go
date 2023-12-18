@@ -6,52 +6,56 @@ import (
 	"github.com/pkg/errors"
 )
 
+// HandlerKey used to define actual handler key using embedding type of HandlerKey
+//
+// e.g.
+//
+//	type myHandlerKey struct {
+//		commmon.HandlerKey
+//	}
+//
+// and instantiate a concrete key - must be exported in order
+// that other imports can use the handler after associating it with the key
+//
+//	var MyHandlerKey = myHandlerKey{}
+type HandlerKey interface {
+	String() string
+}
+
+// RunHandler used to define actual handler using embedding type of RunHandler
+//
+// e.g.
+//
+//	type MyHandlerInterface interface {
+//		commmon.RunHandler
+//	    ...
+//	}
+//
+// and then implement the interface (or skip the interface...)
+//
+//	type MyHandler struct {
+//		commmon.RunHandler
+//	    ...
+//	}
+type RunHandler interface {
+	Get() interface{} //optional
+	String() string
+}
+
+// InitHandler need to be implemented for the handler in order to have the handler initialized in a common manner
+//
+// e.g.
+//
+//	type myInitHandler sturct{}
+//	func (i myInitHandler) Init(args ...interface{}) RunHandler {
+//	    return &MyHander{}
+//	 }
+type InitHandler interface {
+	Init(args ...interface{}) RunHandler
+}
+
+// internal managing
 type (
-	// HandlerKey used to define actual handler key using embedding type of HandlerKey
-	//
-	// e.g.
-	//	type myHandlerKey struct {
-	//		commmon.HandlerKey
-	//	}
-	//
-	// and instantiate a concrete key - must be exported in order
-	// that other imports can use the handler after associating it with the key
-	//
-	//	var MyHandlerKey = MyHandlerKey{}
-	HandlerKey interface {
-		String() string
-	}
-
-	// RunHandler used to define actual handler using embedding type of RunHandler
-	//
-	// e.g.
-	//	type MyHandlerInterface interface {
-	//		commmon.RunHandler
-	//	    ...
-	//	}
-	//
-	// and then implement the interface (or skip the interface...)
-	//
-	//	type MyHandler struct {
-	//		commmon.RunHandler
-	//	    ...
-	//	}
-	RunHandler interface {
-		Get() interface{}
-		String() string
-	}
-
-	// InitHandler need to be implemented for the handler in order to have the handler initialized in a common manner
-	//
-	// e.g.
-	//  type myInitHandler sturct{}
-	//  func (i myInitHandler) Init(args ...interface{}) RunHandler {
-	//      return &MyHander{}
-	//   }
-	InitHandler interface {
-		Init(args ...interface{}) RunHandler
-	}
-
 	handlerMap struct {
 		m sync.Map
 	}
