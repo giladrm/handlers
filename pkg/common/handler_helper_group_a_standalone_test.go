@@ -13,7 +13,6 @@ type (
 	}
 
 	TestFooHandler struct {
-		common.RunHandler
 		desc string
 	}
 

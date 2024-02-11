@@ -72,7 +72,6 @@ type (
 	}
 
 	TestFizzBuzzHandler struct {
-		common.RunHandler
 		desc string
 		fizz TestFizz
 		buzz TestBuzz

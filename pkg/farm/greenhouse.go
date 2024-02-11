@@ -10,7 +10,6 @@ type (
 	}
 
 	GreenHouseFarmO struct {
-		common.RunHandler
 		desc string
 	}
 )

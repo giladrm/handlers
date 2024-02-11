@@ -14,7 +14,6 @@ type (
 	}
 
 	AppleStoreO struct {
-		common.RunHandler
 		desc       string
 		truckDist  distribution.TruckDistribution
 		orchadFarm farm.OrhcadFarm

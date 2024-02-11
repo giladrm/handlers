@@ -10,7 +10,6 @@ type (
 	}
 
 	TruckDistributionO struct {
-		common.RunHandler
 		desc string
 	}
 

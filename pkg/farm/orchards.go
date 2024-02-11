@@ -10,7 +10,6 @@ type (
 	}
 
 	OrchadFarmO struct {
-		common.RunHandler
 		desc string
 	}
 )

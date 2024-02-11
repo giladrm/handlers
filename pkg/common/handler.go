@@ -33,9 +33,11 @@ type HandlerKey interface {
 //	    ...
 //	}
 //
-// and then implement the interface (or skip the interface...)
+// and then implement the interface
 //
-//	type MyHandler struct {
+// or skip the interface...
+//
+//	type SomeOtherHandler struct {
 //		commmon.RunHandler
 //	    ...
 //	}

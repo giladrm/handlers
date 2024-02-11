@@ -10,7 +10,6 @@ type (
 	}
 
 	MangoStoreO struct {
-		common.RunHandler
 		desc string
 	}
 
