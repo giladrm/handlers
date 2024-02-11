@@ -1,9 +1,11 @@
 package common
 
 import (
+	"sort"
 	"sync"
 
 	"github.com/pkg/errors"
+	"golang.org/x/exp/maps"
 )
 
 // HandlerKey used to define actual handler key using embedding type of HandlerKey
@@ -56,14 +58,15 @@ type InitHandler interface {
 
 // internal managing
 type (
+	handlerInitDuo struct {
+		key     HandlerKey
+		handler InitHandler
+	}
 	handlerMap struct {
 		m sync.Map
 	}
 	handlerInitMap struct {
-		m []struct {
-			k HandlerKey
-			v InitHandler
-		}
+		m map[int][]handlerInitDuo
 	}
 )
 
@@ -114,28 +117,44 @@ func (h *handlerMap) getAllHandlers() (res map[HandlerKey]RunHandler) {
 }
 
 // initMap
-
-func (h *handlerInitMap) addInitHandler(key HandlerKey, initHandler InitHandler) error {
-	for _, e := range h.m {
-		if e.k == key {
-			return errors.Wrap(ErrorKeyExist, key.String())
+func (h *handlerInitMap) existInitHandler(key HandlerKey) error {
+	for _, v := range h.m {
+		for _, e := range v {
+			if e.key == key {
+				return errors.Wrap(ErrorKeyExist, key.String())
+			}
 		}
 	}
-	h.m = append(h.m, struct {
-		k HandlerKey
-		v InitHandler
-	}{key, initHandler})
 	return nil
 }
 
-func (h *handlerInitMap) traverse(f func(key HandlerKey, value InitHandler) bool) {
-	for _, e := range h.m {
-		f(e.k, e.v)
+func (h *handlerInitMap) addInitHandler(key HandlerKey, initHandler InitHandler, phaseIndex int) error {
+	if err := h.existInitHandler(key); err != nil {
+		return err
+	}
+	duo := handlerInitDuo{key: key, handler: initHandler}
+	list, ok := h.m[phaseIndex]
+	if ok {
+		list = append(list, duo)
+	} else {
+		list = []handlerInitDuo{duo}
+	}
+	h.m[phaseIndex] = list
+	return nil
+}
+
+func (h *handlerInitMap) traverseByPhase(f func(key HandlerKey, value InitHandler) bool) {
+	keys := maps.Keys(h.m)
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	for _, k := range keys {
+		for _, e := range h.m[k] {
+			f(e.key, e.handler)
+		}
 	}
 }
 
 func (h *handlerInitMap) initAll(args ...interface{}) {
-	h.traverse(func(key HandlerKey, value InitHandler) bool {
+	h.traverseByPhase(func(key HandlerKey, value InitHandler) bool {
 		SetHandler(key, value.Init(args))
 		return true
 	})
@@ -146,12 +165,18 @@ func (h *handlerInitMap) initSome(keys []HandlerKey, args ...interface{}) {
 	for _, e := range keys {
 		kmap[e] = true
 	}
-	h.traverse(func(key HandlerKey, value InitHandler) bool {
+	h.traverseByPhase(func(key HandlerKey, value InitHandler) bool {
 		if _, ok := kmap[key]; ok {
 			SetHandler(key, value.Init(args))
+			kmap[key] = false
 		}
 		return true
 	})
+	for k, v := range kmap {
+		if v {
+			panic(errors.Wrap(ErrorKeyNotFound, k.String()))
+		}
+	}
 }
 
 // AddInitHandler register and associate a inithandler func with a handler key.
@@ -164,8 +189,8 @@ func (h *handlerInitMap) initSome(keys []HandlerKey, args ...interface{}) {
 //	func init() {
 //	    common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit{})
 //	}
-func AddInitHandler(key HandlerKey, initHandler InitHandler) error {
-	return initMap.addInitHandler(key, initHandler)
+func AddInitHandler(key HandlerKey, initHandler InitHandler, phaseIndex int) error {
+	return initMap.addInitHandler(key, initHandler, phaseIndex)
 }
 
 // InitAll initialize all registered handlers
@@ -180,5 +205,5 @@ func InitSome(keys []HandlerKey, args ...interface{}) { initMap.initSome(keys, a
 
 func init() {
 	hMap = &handlerMap{}
-	initMap = &handlerInitMap{}
+	initMap = &handlerInitMap{map[int][]handlerInitDuo{}}
 }

@@ -58,5 +58,5 @@ func MustGetAppleStoreFromCommon() AppleStore {
 func (a appleStoreInit) Init(args ...interface{}) common.RunHandler { return NewAppleStore(args) }
 
 func init() {
-	common.AddInitHandler(AppleStoreKey, appleStoreInit{})
+	common.AddInitHandler(AppleStoreKey, appleStoreInit{}, 2)
 }

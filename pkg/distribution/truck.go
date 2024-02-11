@@ -52,5 +52,5 @@ func (a truckDistributionInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(TruckDistributionKey, truckDistributionInit{})
+	common.AddInitHandler(TruckDistributionKey, truckDistributionInit{}, 1)
 }

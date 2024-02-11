@@ -60,7 +60,7 @@ func (a fooBarInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(FooBarKey, fooBarInit{})
+	common.AddInitHandler(FooBarKey, fooBarInit{}, 2)
 }
 
 // fizzbuzz object
@@ -119,5 +119,5 @@ func (a fizzBuzzInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(FizzBuzzKey, fizzBuzzInit{})
+	common.AddInitHandler(FizzBuzzKey, fizzBuzzInit{}, 2)
 }

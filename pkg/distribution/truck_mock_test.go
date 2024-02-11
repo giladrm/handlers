@@ -49,5 +49,5 @@ func (a truckDistributionMockInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(TruckDistributionMockKey, truckDistributionMockInit{})
+	common.AddInitHandler(TruckDistributionMockKey, truckDistributionMockInit{}, 1)
 }

@@ -49,5 +49,5 @@ func MustGetGreenHouseFarmFromCommon() GreenHouseFarm {
 }
 
 func init() {
-	common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit)
+	common.AddInitHandler(GreenHouseFarmKey, greenHouseFarmInit, 1)
 }

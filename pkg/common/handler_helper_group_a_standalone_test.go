@@ -29,7 +29,7 @@ var (
 
 func NewFoo(args ...interface{}) TestFoo {
 	return &TestFooHandler{
-		desc: "foo test instance",
+		desc: FooKey.String() + " test instance",
 	}
 }
 
@@ -54,7 +54,7 @@ func (a fooInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(FooKey, fooInit{})
+	common.AddInitHandler(FooKey, fooInit{}, 1)
 }
 
 // bar object
@@ -107,7 +107,7 @@ func (a barInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(BarKey, barInit{})
+	common.AddInitHandler(BarKey, barInit{}, 1)
 }
 
 // fizz object
@@ -160,7 +160,7 @@ func (a fizzInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(FizzKey, fizzInit{})
+	common.AddInitHandler(FizzKey, fizzInit{}, 1)
 }
 
 // buzz object
@@ -213,5 +213,5 @@ func (a buzzInit) Init(args ...interface{}) common.RunHandler {
 }
 
 func init() {
-	common.AddInitHandler(BuzzKey, buzzInit{})
+	common.AddInitHandler(BuzzKey, buzzInit{}, 1)
 }

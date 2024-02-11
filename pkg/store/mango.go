@@ -50,5 +50,5 @@ func MustGetMangoStoreFromCommon() MangoStore {
 func (a mangoStoreInit) Init(args ...interface{}) common.RunHandler { return NewMangoStore(args) }
 
 func init() {
-	common.AddInitHandler(MangoStoreKey, mangoStoreInit{})
+	common.AddInitHandler(MangoStoreKey, mangoStoreInit{}, 2)
 }

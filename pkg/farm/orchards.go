@@ -48,4 +48,4 @@ func MustGetOrchadFarmFromCommon() OrhcadFarm {
 	return common.MustGetHandler(OrchadFarmKey).(OrhcadFarm)
 }
 
-func init() { common.AddInitHandler(OrchadFarmKey, orchadFarmInit) }
+func init() { common.AddInitHandler(OrchadFarmKey, orchadFarmInit, 1) }
