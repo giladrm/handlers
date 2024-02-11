@@ -47,7 +47,6 @@ func Test_handlers_adding_handler(t *testing.T) {
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, common.ErrorKeyExist.Error())
 	assert.ErrorContains(t, err, testKey.String())
-
 }
 
 func Test_handlers_one_not_exist(t *testing.T) {
@@ -75,6 +74,26 @@ func Test_handlers_one_exist(t *testing.T) {
 	h2, ok := common.GetHandler(BarKey)
 	assert.False(t, ok)
 	assert.Nil(t, h2)
+}
+
+func Test_handlers_Get_invalid_handler_type(t *testing.T) {
+	defer func() {
+		assert.NoError(t, common.RemoveInitHandler(FooKey))
+		assert.NoError(t, common.AddInitHandler(FooKey, fooInit{}, 1))
+	}()
+	assert.NoError(t, common.RemoveInitHandler(FooKey))
+	err := common.AddInitHandler(FooKey, fizzInit{}, 1)
+	assert.NoError(t, err)
+
+	defer TearDown()
+	handlerKeyList := []common.HandlerKey{
+		FooKey,
+	}
+	common.InitSome(handlerKeyList)
+
+	h, ok := GetTestFooFromCommon()
+	assert.False(t, ok)
+	assert.Nil(t, h)
 }
 
 func Test_handlers_MustGet_init_some(t *testing.T) {

@@ -40,7 +40,8 @@ func GetGreenHouseFarmFromCommon() (GreenHouseFarm, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(GreenHouseFarm), ok
+	r, ok := p.(GreenHouseFarm)
+	return r, ok
 }
 
 func MustGetGreenHouseFarmFromCommon() GreenHouseFarm {

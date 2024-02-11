@@ -39,7 +39,8 @@ func GetMangoStoreFromCommon() (MangoStore, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(MangoStore), ok
+	r, ok := p.(MangoStore)
+	return r, ok
 }
 
 func MustGetMangoStoreFromCommon() MangoStore {

@@ -48,7 +48,8 @@ func GetTestFooBarFromCommon() (TestFooBar, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(TestFooBar), ok
+	r, ok := p.(TestFooBar)
+	return r, ok
 }
 
 func MustGetTestFooBarFromCommon() TestFooBar {
@@ -106,7 +107,8 @@ func GetTestFizzBuzzFromCommon() (TestFizzBuzz, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(TestFizzBuzz), ok
+	r, ok := p.(TestFizzBuzz)
+	return r, ok
 }
 
 func MustGetTestFizzBuzzFromCommon() TestFizzBuzz {

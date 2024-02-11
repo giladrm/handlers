@@ -47,7 +47,8 @@ func GetAppleStoreFromCommon() (AppleStore, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(AppleStore), ok
+	r, ok := p.(AppleStore)
+	return r, ok
 }
 
 func MustGetAppleStoreFromCommon() AppleStore {

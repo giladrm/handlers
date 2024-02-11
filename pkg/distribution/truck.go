@@ -39,7 +39,8 @@ func GetTruckDistributionFromCommon() (TruckDistribution, bool) {
 	if !ok {
 		return nil, ok
 	}
-	return p.(TruckDistribution), ok
+	r, ok := p.(TruckDistribution)
+	return r, ok
 }
 
 func MustGetTruckDistributionFromCommon() TruckDistribution {
