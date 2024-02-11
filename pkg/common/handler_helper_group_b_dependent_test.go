@@ -19,7 +19,7 @@ type (
 		bar  TestBar
 	}
 
-	fooBarKey  struct{ common.HandlerKey }
+	fooBarKey  struct{}
 	fooBarInit struct{}
 )
 
@@ -77,7 +77,7 @@ type (
 		buzz TestBuzz
 	}
 
-	fizzBuzzKey  struct{ common.HandlerKey }
+	fizzBuzzKey  struct{}
 	fizzBuzzInit struct{}
 )
 

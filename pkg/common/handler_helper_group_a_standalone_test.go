@@ -16,7 +16,7 @@ type (
 		desc string
 	}
 
-	fooKey  struct{ common.HandlerKey }
+	fooKey  struct{}
 	fooInit struct{}
 )
 

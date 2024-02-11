@@ -25,7 +25,7 @@ func Test_handlers(t *testing.T) {
 }
 
 type (
-	testKeyType struct{ common.HandlerKey }
+	testKeyType struct{}
 	testInit    struct{}
 )
 

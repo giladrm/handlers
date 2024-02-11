@@ -13,7 +13,7 @@ type (
 		desc string
 	}
 
-	truckDistributionKey  struct{ common.HandlerKey }
+	truckDistributionKey  struct{}
 	truckDistributionInit struct{}
 )
 

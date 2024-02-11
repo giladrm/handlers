@@ -13,7 +13,7 @@ type (
 		desc string
 	}
 
-	mangoKey       struct{ common.HandlerKey }
+	mangoKey       struct{}
 	mangoStoreInit struct{}
 )
 

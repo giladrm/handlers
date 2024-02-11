@@ -12,9 +12,7 @@ import (
 //
 // e.g.
 //
-//	type myHandlerKey struct {
-//		commmon.HandlerKey
-//	}
+//	type myHandlerKey struct {}
 //
 // and instantiate a concrete key - must be exported in order
 // that other imports can use the handler after associating it with the key

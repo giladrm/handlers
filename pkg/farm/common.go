@@ -4,7 +4,6 @@ import "handlers/pkg/common"
 
 type (
 	farmKey struct {
-		common.HandlerKey
 		keyString string
 	}
 	farmInit struct {

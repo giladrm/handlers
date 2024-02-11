@@ -19,7 +19,7 @@ type (
 		orchadFarm farm.OrhcadFarm
 	}
 
-	appleKey       struct{ common.HandlerKey }
+	appleKey       struct{}
 	appleStoreInit struct{}
 )
 
